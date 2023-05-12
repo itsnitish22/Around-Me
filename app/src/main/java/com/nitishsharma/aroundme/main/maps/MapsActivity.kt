@@ -7,27 +7,6 @@ import android.util.Log
 import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.motion.widget.Debug.getLocation
 import androidx.lifecycle.Observer
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -72,50 +51,7 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun initComposeView() {
         binding.composeView.setContent {
-            SetupLazyColumn()
-        }
-    }
-
-    @Composable
-    fun SetupLazyColumn() {
-        LazyRow() {
-            items(items = placesToGo) {
-                PlaceItem(it.second, it.first)
-            }
-        }
-    }
-
-    @Composable
-    fun PlaceItem(placeName: String, placeImg: Int) {
-        Box(
-            modifier = Modifier
-                .padding(5.dp)
-                .background(
-                    color = Color.White,
-                    shape = RoundedCornerShape(20.dp)
-                )
-                .clickable(onClick = {
-                    /* Handle click event */
-                })
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(id = placeImg),
-                    contentDescription = "",
-                    tint = Color.Black,
-                    modifier = Modifier.size(15.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = placeName,
-                    fontSize = 15.sp,
-                    color = Color.Black
-                )
+            SetupLazyColumn(placesToGo = placesToGo) {
             }
         }
     }
