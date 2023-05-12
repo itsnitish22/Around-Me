@@ -24,18 +24,18 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun SetupLazyColumn(
-    placesToGo: List<Pair<Int, String>>,
-    onClick: ((Pair<Int, String>) -> Unit)? = null
+    placesToGo: ArrayList<Pair<Pair<Int, String>, String>>,
+    onClick: ((String) -> Unit)? = null
 ) {
     LazyRow() {
         items(items = placesToGo) {
-            PlaceItem(it.second, it.first, onClick)
+            PlaceItem(it, onClick)
         }
     }
 }
 
 @Composable
-fun PlaceItem(placeName: String, placeImg: Int, onClick: ((Pair<Int, String>) -> Unit)?) {
+fun PlaceItem(item: Pair<Pair<Int, String>, String>, onClick: ((String) -> Unit)?) {
     Box(
         modifier = Modifier
             .padding(5.dp)
@@ -44,7 +44,7 @@ fun PlaceItem(placeName: String, placeImg: Int, onClick: ((Pair<Int, String>) ->
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable(onClick = {
-                onClick?.invoke(Pair(placeImg, placeName))
+                onClick?.invoke(item.second)
             })
     ) {
         Row(
@@ -54,14 +54,14 @@ fun PlaceItem(placeName: String, placeImg: Int, onClick: ((Pair<Int, String>) ->
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(id = placeImg),
+                painter = painterResource(id = item.first.first),
                 contentDescription = "",
                 tint = Color.Black,
                 modifier = Modifier.size(15.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = placeName,
+                text = item.first.second,
                 fontSize = 15.sp,
                 color = Color.Black
             )

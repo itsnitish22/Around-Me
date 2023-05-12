@@ -10,10 +10,6 @@ import com.nitishsharma.aroundme.api.RetrofitInstance
 import kotlinx.coroutines.launch
 
 class MapsActivityVM : ViewModel() {
-//    private val _places = MutableLiveData<ArrayList<Place>>()
-//    val places: LiveData<ArrayList<Place>>
-//        get() = _places
-
     private val _placesOnMap = MutableLiveData<Map<String, LatLng>>()
     val placesOnMap: LiveData<Map<String, LatLng>>
         get() = _placesOnMap
@@ -21,12 +17,13 @@ class MapsActivityVM : ViewModel() {
     fun fetchNearbyPlaces(currentLocation: String, placeToSearch: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getNearbyHospitals(
+                val response = RetrofitInstance.api.getNearbyPlaces(
                     location = currentLocation,
-                    type = placeToSearch
+                    type = placeToSearch.toLowerCase()
                 )
                 if (response.isSuccessful) {
                     val pointsOnMap: MutableMap<String, LatLng> = mutableMapOf()
+                    pointsOnMap.clear()
                     response.body()?.results?.forEach {
                         pointsOnMap[it.name] =
                             LatLng(it.geometry.location.lat, it.geometry.location.lng)

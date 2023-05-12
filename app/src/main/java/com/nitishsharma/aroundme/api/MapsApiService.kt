@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface MapsApiService {
     @GET("nearbysearch/json")
-    suspend fun getNearbyHospitals(
+    suspend fun getNearbyPlaces(
         @Query("location") location: String,
         @Query("radius") radius: Int = 10000,
         @Query("type") type: String,

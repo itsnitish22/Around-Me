@@ -20,7 +20,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.nitishsharma.aroundme.R
 import com.nitishsharma.aroundme.databinding.ActivityMapsBinding
-import com.nitishsharma.aroundme.utils.Constants
 import com.nitishsharma.aroundme.utils.SearchBarHelper
 import com.nitishsharma.aroundme.utils.Utility
 import com.nitishsharma.aroundme.utils.Utility.isLocationPermissionGiven
@@ -34,6 +33,7 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var geoCoder: Geocoder
+    private var currentLatLng: LatLng? = null
     private val mapsActivityVM: MapsActivityVM by viewModels()
     private val placesToGo = SearchBarHelper.PLACES_TO_GO
 
@@ -51,7 +51,13 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun initComposeView() {
         binding.composeView.setContent {
-            SetupLazyColumn(placesToGo = placesToGo) {
+            SetupLazyColumn(placesToGo = placesToGo) { placeToSearch ->
+                currentLatLng?.let { currentLocation ->
+                    mapsActivityVM.fetchNearbyPlaces(
+                        "${currentLocation.latitude},${currentLocation.longitude}",
+                        placeToSearch
+                    )
+                }
             }
         }
     }
@@ -95,11 +101,13 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun showCurrentLocation() {
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
-                val currentLatLng = LatLng(location.latitude, location.longitude)
+                currentLatLng = LatLng(location.latitude, location.longitude)
                 removePreviousMarkers()
                 mMap.isMyLocationEnabled = true
                 mMap.uiSettings.isMyLocationButtonEnabled = false
-                zoomToMarker(currentLatLng, "Current Location")
+                currentLatLng?.let {
+                    zoomToMarker(it, "Current Location")
+                }
             } else {
                 toast("Location not available")
             }
@@ -109,13 +117,11 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        val chandigarh = LatLng(Constants.CHANDIGARH_LAT, Constants.CHANDIGARH_LONG)
-        removePreviousMarkers()
-        addNewMarkers(chandigarh, "Chandigarh Sector-17")
-        zoomToMarker(chandigarh, "Chandigarh Sector-17")
+        setCurrentLocationPointer()
     }
 
     private fun removePreviousMarkers() {
+        Log.i("MapsActivity", markersOnMap.size.toString())
         if (markersOnMap.isNotEmpty()) {
             markersOnMap.forEach {
                 it.remove()
