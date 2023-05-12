@@ -7,6 +7,27 @@ import android.util.Log
 import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.motion.widget.Debug.getLocation
 import androidx.lifecycle.Observer
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -21,6 +42,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.nitishsharma.aroundme.R
 import com.nitishsharma.aroundme.databinding.ActivityMapsBinding
 import com.nitishsharma.aroundme.utils.Constants
+import com.nitishsharma.aroundme.utils.SearchBarHelper
 import com.nitishsharma.aroundme.utils.Utility
 import com.nitishsharma.aroundme.utils.Utility.isLocationPermissionGiven
 import com.nitishsharma.aroundme.utils.Utility.toast
@@ -34,21 +56,77 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var geoCoder: Geocoder
     private val mapsActivityVM: MapsActivityVM by viewModels()
+    private val placesToGo = SearchBarHelper.PLACES_TO_GO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initGoogleMap()
+        initComposeView()
+        initClickListeners()
+        initSearchBar()
+        initObservers()
+    }
+
+    private fun initComposeView() {
+        binding.composeView.setContent {
+            SetupLazyColumn()
+        }
+    }
+
+    @Composable
+    fun SetupLazyColumn() {
+        LazyRow() {
+            items(items = placesToGo) {
+                PlaceItem(it.second, it.first)
+            }
+        }
+    }
+
+    @Composable
+    fun PlaceItem(placeName: String, placeImg: Int) {
+        Box(
+            modifier = Modifier
+                .padding(5.dp)
+                .background(
+                    color = Color.White,
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .clickable(onClick = {
+                    /* Handle click event */
+                })
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = placeImg),
+                    contentDescription = "",
+                    tint = Color.Black,
+                    modifier = Modifier.size(15.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = placeName,
+                    fontSize = 15.sp,
+                    color = Color.Black
+                )
+            }
+        }
+    }
+
+    private fun initGoogleMap() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         getLocation()
         mapFragment = supportFragmentManager
             .findFragmentById(R.id.mapsFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
         geoCoder = Geocoder(this)
-        initClickListeners()
-        initSearchBar()
-        initObservers()
     }
 
     private fun initObservers() {

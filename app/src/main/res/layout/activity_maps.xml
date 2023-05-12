@@ -17,11 +17,12 @@
         tools:context=".main.maps.MapsActivity" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/outerCv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="55dp"
-        android:layout_marginEnd="55dp"
         android:layout_marginTop="10dp"
+        android:layout_marginEnd="55dp"
         android:background="@drawable/shape_searchbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,14 +32,22 @@
             android:id="@+id/searchPlace"
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:queryBackground="@null"
             android:iconifiedByDefault="false"
+            android:queryBackground="@null"
             android:queryHint="Search any place"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/composeView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/outerCv" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/locateMe"
