@@ -40,7 +40,6 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private val mapsActivityVM: MapsActivityVM by viewModels()
     private val placesToGo = SearchBarHelper.PLACES_TO_GO
     private lateinit var dialog: BottomSheetDialog
-    private var searchedLocation: LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,9 +137,9 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun initMarkerClickListener() {
-        mMap.setOnMarkerClickListener {
-            it.tag?.let {
-                showBottomSheetFragment(placeId = it)
+        mMap.setOnMarkerClickListener { marker ->
+            marker.tag?.let {
+                showBottomSheetFragment(placeId = it, markerLocation = marker.position)
             }
             true
         }
@@ -191,19 +190,14 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun searchLocation(toSearch: String) {
         mapsActivityVM.searchPlace(toSearch, geoCoder)
-//        val addresses = geoCoder.getFromLocationName(toSearch, 1)
-//        addresses?.let {
-//            val location = LatLng(addresses[0].latitude, addresses[0].longitude)
-//            removePreviousMarkers()
-//            addNewMarkers(location)
-//            zoomToMarker(location)
-//        }
     }
 
-    private fun showBottomSheetFragment(placeId: Any) {
+    private fun showBottomSheetFragment(placeId: Any, markerLocation: LatLng) {
         val placeIdString = placeId as String
-        DetailedBottomSheet.newInstance(placeIdString)
-            .show(supportFragmentManager, "DETAILED_BOTTOM_SHEET")
+        currentLatLng?.let {
+            DetailedBottomSheet.newInstance(placeIdString, it, markerLocation)
+                .show(supportFragmentManager, "DETAILED_BOTTOM_SHEET")
+        }
     }
 }
 
