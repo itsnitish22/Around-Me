@@ -9,6 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="green">#04AF70</color>
     <color name="red">#FF0000</color>
+    <color name="light_red">#FD2828</color>
     <color name="transparent">#4D000000</color>
     <color name="maps_blue">#1b6df4</color>
 </resources>

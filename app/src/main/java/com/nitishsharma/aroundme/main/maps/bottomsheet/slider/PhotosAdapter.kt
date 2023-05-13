@@ -26,7 +26,7 @@ class PhotosAdapter(
     }
 
     override fun getItemCount(): Int {
-        return if (sliderList.size >= 3) 3 else sliderList.size
+        return if (sliderList.size >= 6) 6 else sliderList.size
     }
 
     class PhotosViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

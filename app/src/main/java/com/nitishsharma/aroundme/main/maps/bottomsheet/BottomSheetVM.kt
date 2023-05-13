@@ -33,6 +33,6 @@ class BottomSheetVM : ViewModel() {
     fun convertPhotoReferenceToGlideLoadableLink(photos: ArrayList<Photo>): ArrayList<String> {
         return ArrayList<String>(photos.map {
             "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${it.photo_reference}&key=${BuildConfig.MAPS_API_KEY}"
-        }.take(3))
+        }.take(6))
     }
 }

@@ -17,7 +17,6 @@ import com.nitishsharma.aroundme.R
 import com.nitishsharma.aroundme.api.models.detailedplace.DetailedPlace
 import com.nitishsharma.aroundme.databinding.DetailedBottomsheetBinding
 import com.nitishsharma.aroundme.main.maps.bottomsheet.slider.PhotosAdapter
-import com.nitishsharma.aroundme.utils.Constants
 import com.nitishsharma.aroundme.utils.Utility.toast
 
 class DetailedBottomSheet : BottomSheetDialogFragment() {
@@ -35,9 +34,9 @@ class DetailedBottomSheet : BottomSheetDialogFragment() {
         ): DetailedBottomSheet {
             val fragment = DetailedBottomSheet()
             val args = Bundle().apply {
-                putString(Constants.ARG_PLACE_ID, placeId)
-                putParcelable(Constants.ARGS_CURR_LOCATION, currentLocation)
-                putParcelable(Constants.ARGS_MARKER_LOCATION, markerLocation)
+                putString("ARG_PLACE_ID", placeId)
+                putParcelable("ARGS_CURR_LOCATION", currentLocation)
+                putParcelable("ARGS_MARKER_LOCATION", markerLocation)
             }
             fragment.arguments = args
             return fragment
@@ -108,31 +107,23 @@ class DetailedBottomSheet : BottomSheetDialogFragment() {
     @SuppressLint("SetTextI18n")
     private fun initViews(place: DetailedPlace) {
         binding.apply {
-            place.name?.let {
-                nameTv.text = it
+            nameTv.text = if (place.name.isNullOrEmpty()) "Name Not Available" else place.name
+            val isOpen = place.opening_hours?.open_now ?: false
+            openNowTv.apply {
+                setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        if (isOpen) R.color.green else R.color.red
+                    )
+                )
+                text = if (isOpen) "Open" else "Closed"
             }
-            place.opening_hours?.open_now?.let {
-                if (!it) {
-                    openNowTv.apply {
-                        setTextColor(ContextCompat.getColor(context, R.color.red))
-                        text = "Closed"
-                    }
-                } else {
-                    openNowTv.apply {
-                        setTextColor(ContextCompat.getColor(context, R.color.green))
-                        text = "Open"
-                    }
-                }
-            }
-            place.rating?.let {
-                ratingTv.text = "Ratings: $it"
-            }
-            place.international_phone_number?.let {
-                phoneTv.text = it
-            }
-            place.formatted_address?.let {
-                addressTv.text = it
-            }
+            ratingTv.text =
+                if (place.rating != null) "Ratings: ${place.rating}" else "Ratings not available"
+            phoneTv.text =
+                if (place.international_phone_number.isNullOrEmpty()) "Phone number not available" else place.international_phone_number
+            addressTv.text =
+                if (place.formatted_address.isNullOrEmpty()) "Address not available" else place.formatted_address
         }
         binding.progressBar.visibility = View.GONE
     }

@@ -8,6 +8,7 @@ import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.Debug.getLocation
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -22,6 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nitishsharma.aroundme.R
 import com.nitishsharma.aroundme.databinding.ActivityMapsBinding
 import com.nitishsharma.aroundme.main.maps.bottomsheet.DetailedBottomSheet
+import com.nitishsharma.aroundme.utils.BitmapHelper
 import com.nitishsharma.aroundme.utils.SearchBarHelper
 import com.nitishsharma.aroundme.utils.Utility
 import com.nitishsharma.aroundme.utils.Utility.isLocationPermissionGiven
@@ -39,6 +42,10 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private val mapsActivityVM: MapsActivityVM by viewModels()
     private val placesToGo = SearchBarHelper.PLACES_TO_GO
     private lateinit var dialog: BottomSheetDialog
+    private val dropIcon: BitmapDescriptor by lazy {
+        val color = ContextCompat.getColor(this, R.color.light_red)
+        BitmapHelper.vectorToBitmap(this, R.drawable.ic_drop, color)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,8 +161,11 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun addNewMarkers(location: LatLng, placeId: String? = null) {
-        val marker = mMap.addMarker(
+        val marker = if (placeId.isNullOrEmpty()) mMap.addMarker(
             MarkerOptions().position(location)
+                .title("title")
+        ) else mMap.addMarker(
+            MarkerOptions().position(location).icon(dropIcon)
                 .title("title")
         )
         marker?.tag = placeId

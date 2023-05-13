@@ -13,6 +13,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/con1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.8" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/dropDownBs"
             android:layout_width="60dp"
@@ -23,37 +30,46 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/topLl"
-            android:layout_width="wrap_content"
+        <!--        <LinearLayout-->
+        <!--            android:id="@+id/topLl"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginStart="15dp"-->
+        <!--            android:layout_marginTop="15dp"-->
+        <!--            android:orientation="horizontal"-->
+        <!--            app:layout_constraintEnd_toEndOf="@id/con1"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/dropDownBs">-->
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/nameTv"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="15dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:orientation="horizontal"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dropDownBs">
+            app:layout_constraintTop_toBottomOf="@id/dropDownBs"
+            tools:text="Kya Ne Baatan" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/nameTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name Not Available"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/openNowTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/green"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/nameTv"
+            app:layout_constraintTop_toBottomOf="@id/nameTv"
+            tools:text="Open" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/openNowTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:textColor="@color/green"
-                android:textSize="16sp"
-                app:layout_constraintStart_toEndOf="@id/nameTv"
-                app:layout_constraintTop_toTopOf="@id/nameTv"
-                tools:text="Open" />
-
-        </LinearLayout>
+        <!--        </LinearLayout>-->
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/ratingTv"
@@ -63,11 +79,11 @@
             android:layout_marginTop="10dp"
             android:drawableEnd="@drawable/ic_star"
             android:drawablePadding="5dp"
-            android:text="Ratings not available"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/topLl" />
+            app:layout_constraintTop_toBottomOf="@id/openNowTv"
+            tools:text="Rating: 4.6" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/phoneTv"
@@ -75,11 +91,11 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="10dp"
-            android:text="Phone number not available"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ratingTv" />
+            app:layout_constraintTop_toBottomOf="@id/ratingTv"
+            tools:text="+91-7098491353" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/directionsIv"
@@ -95,15 +111,17 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/addressTv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
             android:layout_marginTop="10dp"
-            android:text="Address not available"
+            android:layout_marginEnd="15dp"
             android:textColor="@color/black"
             android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/phoneTv" />
+            app:layout_constraintTop_toBottomOf="@id/phoneTv"
+            tools:text="#100, Sector 38-A, Chandigarh" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
