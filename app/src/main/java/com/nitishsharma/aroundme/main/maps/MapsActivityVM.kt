@@ -43,7 +43,6 @@ class MapsActivityVM : ViewModel() {
                         )
                     }
                     _placesOnMap.postValue(pointsOnMap)
-                    Log.i("MapsActivityVm", pointsOnMap.toString())
                 }
             } catch (e: Exception) {
                 Log.e("MapsActivityVM", e.toString())

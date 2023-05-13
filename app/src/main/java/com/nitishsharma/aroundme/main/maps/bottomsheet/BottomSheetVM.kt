@@ -23,7 +23,6 @@ class BottomSheetVM : ViewModel() {
                 val response = RetrofitInstance.api.getDetailedPlace(placeId)
                 if (response.isSuccessful) {
                     _detailedPlaceResponse.postValue(response.body())
-                    Log.i("BottomSheetVM", response.body().toString())
                 }
             } catch (e: Exception) {
                 Log.e("BottomSheetVM", e.toString())

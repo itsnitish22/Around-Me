@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +17,7 @@ import com.nitishsharma.aroundme.R
 import com.nitishsharma.aroundme.api.models.detailedplace.DetailedPlace
 import com.nitishsharma.aroundme.databinding.DetailedBottomsheetBinding
 import com.nitishsharma.aroundme.main.maps.bottomsheet.slider.PhotosAdapter
+import com.nitishsharma.aroundme.utils.Constants
 import com.nitishsharma.aroundme.utils.Utility.toast
 
 class DetailedBottomSheet : BottomSheetDialogFragment() {
@@ -35,9 +35,9 @@ class DetailedBottomSheet : BottomSheetDialogFragment() {
         ): DetailedBottomSheet {
             val fragment = DetailedBottomSheet()
             val args = Bundle().apply {
-                putString("ARG_PLACE_ID", placeId)
-                putParcelable("ARGS_CURR_LOCATION", currentLocation)
-                putParcelable("ARGS_MARKER_LOCATION", markerLocation)
+                putString(Constants.ARG_PLACE_ID, placeId)
+                putParcelable(Constants.ARGS_CURR_LOCATION, currentLocation)
+                putParcelable(Constants.ARGS_MARKER_LOCATION, markerLocation)
             }
             fragment.arguments = args
             return fragment
@@ -94,14 +94,12 @@ class DetailedBottomSheet : BottomSheetDialogFragment() {
 
     private fun initObservers() {
         bottomSheetVM.detailedPlaceResponse.observe(requireActivity(), Observer {
-            Log.i("DetailedBottomSheet", it.result.toString())
             it.result?.photos?.let { photoRef ->
                 bottomSheetVM.convertPhotoReferenceToGlideLoadableLink(
                     photoRef
                 )
             }?.let { formattedArrayOfPhotos ->
                 initSliderAdapter(formattedArrayOfPhotos)
-                Log.i("DetailedBotttomSheet", formattedArrayOfPhotos.toString())
             }
             it.result?.let { results -> initViews(results) }
         })

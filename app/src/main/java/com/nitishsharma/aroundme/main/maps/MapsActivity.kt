@@ -3,7 +3,6 @@ package com.nitishsharma.aroundme.main.maps
 import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.SearchView
 import androidx.activity.viewModels
@@ -146,7 +145,6 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun removePreviousMarkers() {
-        Log.i("MapsActivity", markersOnMap.size.toString())
         if (markersOnMap.isNotEmpty()) {
             markersOnMap.forEach {
                 it.first.remove()
@@ -175,7 +173,6 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun onQueryTextSubmit(p0: String?): Boolean {
                 if (p0 != null) {
                     searchText = p0.replace(" ", "_")
-                    Log.i("MainActivity", searchText)
                     binding.progressBar.visibility = View.VISIBLE
                     searchLocation(searchText)
                 }
