@@ -1,4 +1,4 @@
-package com.nitishsharma.aroundme.api.models
+package com.nitishsharma.aroundme.api.models.place
 
 data class PlaceResponse(
     val results: ArrayList<Place>
@@ -6,7 +6,9 @@ data class PlaceResponse(
 
 data class Place(
     val geometry: Geometry,
-    val name: String
+    val icon: String,
+    val name: String,
+    val place_id: String
 )
 
 data class Geometry(

@@ -6,6 +6,15 @@ buildscript {
         nav_version = '2.5.3'
         compose_version = '1.4.3'
     }
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven {
+            url = uri("https://plugins.gradle.org/m2/")
+        }
+        jcenter()
+    }
     dependencies {
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
     }

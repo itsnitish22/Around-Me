@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,8 +19,10 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.nitishsharma.aroundme.R
 import com.nitishsharma.aroundme.databinding.ActivityMapsBinding
+import com.nitishsharma.aroundme.main.maps.bottomsheet.DetailedBottomSheet
 import com.nitishsharma.aroundme.utils.SearchBarHelper
 import com.nitishsharma.aroundme.utils.Utility
 import com.nitishsharma.aroundme.utils.Utility.isLocationPermissionGiven
@@ -28,7 +31,7 @@ import com.nitishsharma.aroundme.utils.Utility.toast
 open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-    private var markersOnMap = ArrayList<Marker>()
+    private var markersOnMap = ArrayList<Pair<Marker, String?>>()
     private var searchText = ""
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var mapFragment: SupportMapFragment
@@ -36,11 +39,14 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var currentLatLng: LatLng? = null
     private val mapsActivityVM: MapsActivityVM by viewModels()
     private val placesToGo = SearchBarHelper.PLACES_TO_GO
+    private lateinit var dialog: BottomSheetDialog
+    private var searchedLocation: LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        dialog = BottomSheetDialog(this)
 
         initGoogleMap()
         initComposeView()
@@ -51,8 +57,9 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun initComposeView() {
         binding.composeView.setContent {
-            SetupLazyColumn(placesToGo = placesToGo) { placeToSearch ->
+            SetupPlacesLazyRow(placesToGo = placesToGo) { placeToSearch ->
                 currentLatLng?.let { currentLocation ->
+                    binding.progressBar.visibility = View.VISIBLE
                     mapsActivityVM.fetchNearbyPlaces(
                         "${currentLocation.latitude},${currentLocation.longitude}",
                         placeToSearch
@@ -75,8 +82,17 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapsActivityVM.placesOnMap.observe(this, Observer { pointsOnMap ->
             removePreviousMarkers()
             pointsOnMap.forEach {
-                addNewMarkers(it.value, it.key)
+                addNewMarkers(it.second.second, it.first)
             }
+            binding.progressBar.visibility = View.GONE
+        })
+        mapsActivityVM.searchedLocation.observe(this, Observer { location ->
+            removePreviousMarkers()
+            location?.let {
+                addNewMarkers(it)
+                zoomToMarker(it)
+            }
+            binding.progressBar.visibility = View.GONE
         })
     }
 
@@ -106,7 +122,7 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 mMap.isMyLocationEnabled = true
                 mMap.uiSettings.isMyLocationButtonEnabled = false
                 currentLatLng?.let {
-                    zoomToMarker(it, "Current Location")
+                    zoomToMarker(it)
                 }
             } else {
                 toast("Location not available")
@@ -118,29 +134,40 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         setCurrentLocationPointer()
+        initMarkerClickListener()
+    }
+
+    private fun initMarkerClickListener() {
+        mMap.setOnMarkerClickListener {
+            it.tag?.let {
+                showBottomSheetFragment(placeId = it)
+            }
+            true
+        }
     }
 
     private fun removePreviousMarkers() {
         Log.i("MapsActivity", markersOnMap.size.toString())
         if (markersOnMap.isNotEmpty()) {
             markersOnMap.forEach {
-                it.remove()
+                it.first.remove()
             }
             markersOnMap.removeAll(markersOnMap)
         }
     }
 
-    private fun addNewMarkers(location: LatLng, title: String) {
+    private fun addNewMarkers(location: LatLng, placeId: String? = null) {
         val marker = mMap.addMarker(
             MarkerOptions().position(location)
-                .title(title)
+                .title("title")
         )
+        marker?.tag = placeId
         marker?.let {
-            markersOnMap.add(it)
+            markersOnMap.add(Pair(it, placeId))
         }
     }
 
-    private fun zoomToMarker(location: LatLng, title: String) {
+    private fun zoomToMarker(location: LatLng) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 12f))
     }
 
@@ -150,6 +177,7 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (p0 != null) {
                     searchText = p0.replace(" ", "_")
                     Log.i("MainActivity", searchText)
+                    binding.progressBar.visibility = View.VISIBLE
                     searchLocation(searchText)
                 }
                 return true
@@ -162,13 +190,20 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun searchLocation(toSearch: String) {
-        val addresses = geoCoder.getFromLocationName(toSearch, 1)
-        addresses?.let {
-            val location = LatLng(addresses[0].latitude, addresses[0].longitude)
-            removePreviousMarkers()
-            addNewMarkers(location, toSearch)
-            zoomToMarker(location, toSearch)
-        }
+        mapsActivityVM.searchPlace(toSearch, geoCoder)
+//        val addresses = geoCoder.getFromLocationName(toSearch, 1)
+//        addresses?.let {
+//            val location = LatLng(addresses[0].latitude, addresses[0].longitude)
+//            removePreviousMarkers()
+//            addNewMarkers(location)
+//            zoomToMarker(location)
+//        }
+    }
+
+    private fun showBottomSheetFragment(placeId: Any) {
+        val placeIdString = placeId as String
+        DetailedBottomSheet.newInstance(placeIdString)
+            .show(supportFragmentManager, "DETAILED_BOTTOM_SHEET")
     }
 }
 

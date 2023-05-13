@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SetupLazyColumn(
+fun SetupPlacesLazyRow(
     placesToGo: ArrayList<Pair<Pair<Int, String>, String>>,
     onClick: ((String) -> Unit)? = null
 ) {

@@ -9,7 +9,11 @@ class SearchBarHelper {
             Pair(Pair(R.drawable.ic_atm, "Atm"), "atm"),
             Pair(Pair(R.drawable.ic_coffee, "Coffee"), "cafe"),
             Pair(Pair(R.drawable.ic_restaurant, "Restaurant"), "restaurant"),
-            Pair(Pair(R.drawable.ic_park, "Park"), "amusement_park")
+            Pair(Pair(R.drawable.ic_carrental, "Car Rental"), "car_rental"),
+            Pair(Pair(R.drawable.ic_chemist, "Chemist"), "drugstore"),
+            Pair(Pair(R.drawable.ic_electrician, "Electrical"), "electrician"),
+            Pair(Pair(R.drawable.ic_cake, "Bakery"), "bakery"),
+            Pair(Pair(R.drawable.ic_shop, "Grocery"), "department_store"),
         )
     }
 }
