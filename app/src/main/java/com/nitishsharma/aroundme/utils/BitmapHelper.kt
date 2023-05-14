@@ -21,7 +21,7 @@ object BitmapHelper {
     ): BitmapDescriptor {
         val vectorDrawable = ResourcesCompat.getDrawable(context.resources, id, null)
         if (vectorDrawable == null) {
-            Log.e("BitmapHelper", "Resource not found")
+            Log.e(Constants.ActivityNameForLogging.BITMAP_HELPER, "Resource not found")
             return BitmapDescriptorFactory.defaultMarker()
         }
         val bitmap = Bitmap.createBitmap(

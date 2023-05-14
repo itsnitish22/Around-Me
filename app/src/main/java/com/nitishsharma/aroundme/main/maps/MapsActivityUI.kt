@@ -22,10 +22,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+//setup lazy row for defining categories to search places around
 @Composable
 fun SetupPlacesLazyRow(
     placesToGo: ArrayList<Pair<Pair<Int, String>, String>>,
-    onClick: ((String) -> Unit)? = null
+    onClick: ((String) -> Unit)? = null //callback on click
 ) {
     LazyRow() {
         items(items = placesToGo) {
@@ -44,7 +45,7 @@ fun PlaceItem(item: Pair<Pair<Int, String>, String>, onClick: ((String) -> Unit)
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable(onClick = {
-                onClick?.invoke(item.second)
+                onClick?.invoke(item.second) // on click, invoke the callback and send itemPlaceId
             })
     ) {
         Row(

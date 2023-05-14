@@ -15,6 +15,7 @@ class SplashActivity : AppCompatActivity() {
         moveToMainMap()
     }
 
+    //navigate to main activity after 2500 ms
     private fun moveToMainMap() {
         Handler().postDelayed({
             startActivity(Intent(this, MapsActivity::class.java))

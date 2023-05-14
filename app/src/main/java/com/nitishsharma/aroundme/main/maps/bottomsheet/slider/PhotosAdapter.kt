@@ -21,12 +21,13 @@ class PhotosAdapter(
     }
 
     override fun onBindViewHolder(holder: PhotosViewHolder, position: Int) {
-        val placeImage = sliderList[position]
-        Glide.with(holder.imageView.context).load(placeImage).into(holder.imageView)
+        val placeImage = sliderList[position] //get the url from item position
+        Glide.with(holder.imageView.context).load(placeImage)
+            .into(holder.imageView) //load it using glide in the view
     }
 
     override fun getItemCount(): Int {
-        return if (sliderList.size >= 6) 6 else sliderList.size
+        return if (sliderList.size >= 6) 6 else sliderList.size //if the size of array is more than or equal to 6, show only 6 images, otherwise show whatever size is available
     }
 
     class PhotosViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

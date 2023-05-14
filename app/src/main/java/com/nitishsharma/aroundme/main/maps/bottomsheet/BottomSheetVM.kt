@@ -9,6 +9,7 @@ import com.nitishsharma.aroundme.BuildConfig
 import com.nitishsharma.aroundme.api.RetrofitInstance
 import com.nitishsharma.aroundme.api.models.detailedplace.DetailedPlaceResponse
 import com.nitishsharma.aroundme.api.models.detailedplace.Photo
+import com.nitishsharma.aroundme.utils.Constants
 import kotlinx.coroutines.launch
 
 class BottomSheetVM : ViewModel() {
@@ -17,22 +18,24 @@ class BottomSheetVM : ViewModel() {
     val detailedPlaceResponse: LiveData<DetailedPlaceResponse>
         get() = _detailedPlaceResponse
 
+    //get details of the place according to the placeId
     fun getDetailedPlace(placeId: String) {
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.getDetailedPlace(placeId)
+                val response = RetrofitInstance.api.getDetailedPlace(placeId) // hit api
                 if (response.isSuccessful) {
-                    _detailedPlaceResponse.postValue(response.body())
+                    _detailedPlaceResponse.postValue(response.body()) //post data
                 }
             } catch (e: Exception) {
-                Log.e("BottomSheetVM", e.toString())
+                Log.e(Constants.ActivityNameForLogging.BOTTOM_SHEET_VM, e.toString())
             }
         }
     }
 
+    //converting the Photo object (JSON) into array of Strings which will ultimately be loadable URIs by glide
     fun convertPhotoReferenceToGlideLoadableLink(photos: ArrayList<Photo>): ArrayList<String> {
         return ArrayList<String>(photos.map {
             "https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${it.photo_reference}&key=${BuildConfig.MAPS_API_KEY}"
-        }.take(6))
+        }.take(6)) //take max 6 objects and do the operation
     }
 }

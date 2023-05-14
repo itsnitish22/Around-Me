@@ -19,7 +19,7 @@ object Utility {
         requireContext().toast(msg)
     }
 
-    fun Context.isLocationPermissionGiven(): Boolean {
+    fun Context.isLocationPermissionNotGiven(): Boolean {
         return ActivityCompat.checkSelfPermission(
             this,
             android.Manifest.permission.ACCESS_FINE_LOCATION

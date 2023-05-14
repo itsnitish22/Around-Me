@@ -20,13 +20,14 @@ import com.nitishsharma.aroundme.main.maps.bottomsheet.slider.PhotosAdapter
 import com.nitishsharma.aroundme.utils.Utility.toast
 
 class DetailedBottomSheet : BottomSheetDialogFragment() {
-    private val bottomSheetVM: BottomSheetVM by viewModels()
-    private lateinit var binding: DetailedBottomsheetBinding
-    private lateinit var placeId: String
-    private lateinit var currentLocation: LatLng
-    private lateinit var markerLocation: LatLng
+    private val bottomSheetVM: BottomSheetVM by viewModels() //viewmodel
+    private lateinit var binding: DetailedBottomsheetBinding //binding
+    private lateinit var placeId: String //currentClickedPlaceId
+    private lateinit var currentLocation: LatLng //currentUserLocation
+    private lateinit var markerLocation: LatLng //clickedMarkerLocation
 
     companion object {
+        //get new instance of this bottom sheet by adding args into it
         fun newInstance(
             placeId: String,
             currentLocation: LatLng,
@@ -48,6 +49,7 @@ class DetailedBottomSheet : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = DetailedBottomsheetBinding.inflate(inflater, container, false).also {
+        //init stuff
         binding = it
         placeId =
             arguments?.getString("ARG_PLACE_ID")!!
@@ -55,6 +57,7 @@ class DetailedBottomSheet : BottomSheetDialogFragment() {
         markerLocation = arguments?.getParcelable("ARGS_MARKER_LOCATION")!!
     }.root
 
+    //init slider adapter
     private fun initSliderAdapter(photos: ArrayList<String>) {
         binding.recyclerView.adapter = PhotosAdapter(photos)
         binding.recyclerView.layoutManager =
@@ -63,19 +66,21 @@ class DetailedBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bottomSheetVM.getDetailedPlace(placeId)
+        bottomSheetVM.getDetailedPlace(placeId) //getting detailed place from api
         binding.progressBar.visibility = View.VISIBLE
 
+        //init stuff
         initClickListeners()
         initObservers()
     }
 
     private fun initClickListeners() {
-        binding.directionsIv.setOnClickListener {
-            navigateToLocation(currentLocation, markerLocation)
+        binding.directionsIv.setOnClickListener {//click on directions button, open map [start: current location, destination: clicked marker location]
+            navigateToLocation(currentLocation, markerLocation) //navigate to that location
         }
     }
 
+    //open google maps for directions
     private fun navigateToLocation(currentLocation: LatLng, markerLocation: LatLng) {
         val origin = "${currentLocation.latitude},${currentLocation.longitude}"
         val destination = "${markerLocation.latitude},${markerLocation.longitude}"
@@ -92,18 +97,21 @@ class DetailedBottomSheet : BottomSheetDialogFragment() {
     }
 
     private fun initObservers() {
-        bottomSheetVM.detailedPlaceResponse.observe(requireActivity(), Observer {
-            it.result?.photos?.let { photoRef ->
-                bottomSheetVM.convertPhotoReferenceToGlideLoadableLink(
-                    photoRef
-                )
-            }?.let { formattedArrayOfPhotos ->
-                initSliderAdapter(formattedArrayOfPhotos)
-            }
-            it.result?.let { results -> initViews(results) }
-        })
+        bottomSheetVM.detailedPlaceResponse.observe(
+            requireActivity(),
+            Observer { //observing detailed plcae response
+                it.result?.photos?.let { photoRef -> //getting array of photos
+                    bottomSheetVM.convertPhotoReferenceToGlideLoadableLink( //converting it to array of strings, where strings will be URIs
+                        photoRef
+                    )
+                }?.let { formattedArrayOfPhotos -> //getting array of strings (URIs)
+                    initSliderAdapter(formattedArrayOfPhotos) //sending it to adapter
+                }
+                it.result?.let { results -> initViews(results) } //sending results to show in views
+            })
     }
 
+    //init views
     @SuppressLint("SetTextI18n")
     private fun initViews(place: DetailedPlace) {
         binding.apply {
