@@ -30,8 +30,7 @@ object Utility {
         ActivityCompat.requestPermissions(
             activity,
             arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-            1000
+            Constants.LOCATION_PERMISSION_REQUEST_CODE
         )
     }
-
 }

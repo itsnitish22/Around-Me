@@ -1,6 +1,7 @@
 package com.nitishsharma.aroundme.main.maps
 
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -67,12 +68,16 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun initComposeView() {
         binding.composeView.setContent {
             SetupPlacesLazyRow(placesToGo = placesToGo) { placeToSearch -> //callback on clicked category
-                currentLatLng?.let { currentLocation ->
-                    binding.progressBar.visibility = View.VISIBLE
-                    mapsActivityVM.fetchNearbyPlaces( //fetch nearby places
-                        "${currentLocation.latitude},${currentLocation.longitude}",
-                        placeToSearch
-                    )
+                if (isLocationPermissionNotGiven()) {
+                    Utility.askLocationPermission(this@MapsActivity)
+                } else {
+                    currentLatLng?.let { currentLocation ->
+                        binding.progressBar.visibility = View.VISIBLE
+                        mapsActivityVM.fetchNearbyPlaces( //fetch nearby places
+                            "${currentLocation.latitude},${currentLocation.longitude}",
+                            placeToSearch
+                        )
+                    }
                 }
             }
         }
@@ -209,6 +214,7 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     searchText = p0.replace(" ", "_")
                     binding.progressBar.visibility = View.VISIBLE
                     searchLocation(searchText) //search that location
+                    binding.searchPlace.clearFocus()
                 }
                 return true
             }
@@ -230,6 +236,24 @@ open class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         currentLatLng?.let {
             DetailedBottomSheet.newInstance(placeIdString, it, markerLocation)
                 .show(supportFragmentManager, "DETAILED_BOTTOM_SHEET")
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            Constants.LOCATION_PERMISSION_REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted, get current location
+                    showCurrentLocation()
+                } else {
+                    toast("You need to grant the permission")
+                }
+            }
         }
     }
 }
